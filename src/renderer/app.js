@@ -109,7 +109,7 @@ function renderEntries() {
       const linkedText = linkify(displayText);
       contentHtml = `<div class="entry-content">${linkedText}</div>`;
     } else {
-      thumbHtml = `<div class="entry-type-icon type-image">${ICONS.typeImage}</div>`;
+      thumbHtml = `<img class="entry-thumb" data-image-id="${entry.id}" src="" alt="">`;
       contentHtml = `<div class="entry-content image-name">${escapeHtml(entry.imagePath.split('/').pop())}</div>`;
     }
 
