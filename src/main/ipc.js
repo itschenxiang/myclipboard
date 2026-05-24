@@ -107,6 +107,13 @@ function registerIpcHandlers(storage, panelWindow) {
     panelWindow.hide();
   });
 
+  ipcMain.handle('app:get-info', () => {
+    return {
+      dataDir: storage.dataDir,
+      entryCount: storage.entries.length,
+    };
+  });
+
   function notifyRenderer() {
     panelWindow.webContents.send('entries:updated');
   }

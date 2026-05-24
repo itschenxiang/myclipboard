@@ -28,22 +28,26 @@ const ICONS = {
 // Init
 async function init() {
   // Sidebar filter buttons
-  document.querySelectorAll('.sidebar-item').forEach(btn => {
+  document.querySelectorAll('.sidebar-item[data-filter]').forEach(btn => {
     btn.addEventListener('click', () => {
-      document.querySelectorAll('.sidebar-item').forEach(b => b.classList.remove('active'));
+      document.querySelectorAll('.sidebar-item[data-filter]').forEach(b => b.classList.remove('active'));
       btn.classList.add('active');
       sidebarFilter = btn.dataset.filter;
       refresh();
     });
   });
 
-  searchInput.addEventListener('input', onSearchInput);
-  previewClose.addEventListener('click', closePreview);
-  previewOverlay.addEventListener('click', (e) => {
-    if (e.target === previewOverlay) closePreview();
+  // Settings button
+  const settingsBtn = document.getElementById('settings-btn');
+  const infoOverlay = document.getElementById('info-overlay');
+  const infoClose = document.getElementById('info-close');
+  settingsBtn.addEventListener('click', () => openInfo());
+  infoClose.addEventListener('click', () => closeInfo());
+  infoOverlay.addEventListener('click', (e) => {
+    if (e.target === infoOverlay) closeInfo();
   });
-  previewCopy.addEventListener('click', onPreviewCopy);
-  previewDelete.addEventListener('click', onPreviewDelete);
+
+  searchInput.addEventListener('input', onSearchInput);
   window.myClipboard.onEntriesUpdated(() => refresh());
   await refresh();
 }
@@ -56,7 +60,13 @@ async function refresh() {
   // Client-side sidebar filtering
   if (sidebarFilter === 'pinned') {
     entries = entries.filter(e => e.pinned);
-  } else if (sidebarFilter === 'images') {
+  } else if (sidebarFilter === 'text') {
+    entries = entries.filter(e => e.type === 'text' && !urlRegex.test(e.content.trim()));
+    urlRegex.lastIndex = 0;
+  } else if (sidebarFilter === 'link') {
+    entries = entries.filter(e => e.type === 'text' && urlRegex.test(e.content.trim()));
+    urlRegex.lastIndex = 0;
+  } else if (sidebarFilter === 'image') {
     entries = entries.filter(e => e.type === 'image');
   }
 
@@ -230,6 +240,18 @@ async function onPreviewDelete() {
     closePreview();
     await refresh();
   }
+}
+
+// Info modal
+async function openInfo() {
+  const info = await window.myClipboard.getAppInfo();
+  document.getElementById('info-path').textContent = info.dataDir;
+  document.getElementById('info-count').textContent = info.entryCount;
+  document.getElementById('info-overlay').classList.remove('hidden');
+}
+
+function closeInfo() {
+  document.getElementById('info-overlay').classList.add('hidden');
 }
 
 // Utility functions
