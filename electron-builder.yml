@@ -1,0 +1,9 @@
+appId: com.myclipboard.app
+productName: MyClipboard
+mac:
+  category: public.app-category.utilities
+  target: dmg
+files:
+  - src/**/*
+  - assets/**/*
+  - package.json
