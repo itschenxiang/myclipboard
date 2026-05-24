@@ -70,15 +70,6 @@ function registerIpcHandlers(storage, panelWindow) {
     }
   });
 
-  ipcMain.handle('tags:get-all', () => {
-    try {
-      return storage.getAllTags();
-    } catch (err) {
-      console.error('tags:get-all error:', err);
-      return [];
-    }
-  });
-
   ipcMain.handle('entries:clear-all', async () => {
     try {
       await storage.clearAll();

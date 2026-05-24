@@ -1,7 +1,5 @@
 // State
 let entries = [];
-let allTags = [];
-let activeTagFilter = null;
 let sidebarFilter = 'all';
 let searchQuery = '';
 let debounceTimer = null;
@@ -9,12 +7,10 @@ let currentPreviewEntry = null;
 
 // DOM refs
 const searchInput = document.getElementById('search-input');
-const tagFilterRow = document.getElementById('tag-filter-row');
 const entryList = document.getElementById('entry-list');
 const clearAllBtn = document.getElementById('clear-all-btn');
 const previewOverlay = document.getElementById('preview-overlay');
 const previewContent = document.getElementById('preview-content');
-const previewTags = document.getElementById('preview-tags');
 const previewCopy = document.getElementById('preview-copy');
 const previewDelete = document.getElementById('preview-delete');
 const previewClose = document.getElementById('preview-close');
@@ -55,7 +51,6 @@ async function init() {
 async function refresh() {
   const filter = {};
   if (searchQuery) filter.search = searchQuery;
-  if (activeTagFilter) filter.tag = activeTagFilter;
   entries = await window.myClipboard.getEntries(filter);
 
   // Client-side sidebar filtering
@@ -65,7 +60,6 @@ async function refresh() {
     entries = entries.filter(e => e.type === 'image');
   }
 
-  allTags = await window.myClipboard.getAllTags();
   render();
 }
 
@@ -84,27 +78,7 @@ async function onClearAll() {
 
 // Rendering
 function render() {
-  renderTagFilters();
   renderEntries();
-}
-
-function renderTagFilters() {
-  if (allTags.length === 0) {
-    tagFilterRow.classList.add('hidden');
-    return;
-  }
-  tagFilterRow.classList.remove('hidden');
-  tagFilterRow.innerHTML = allTags.map(tag =>
-    `<span class="tag-chip${tag === activeTagFilter ? ' active' : ''}" data-tag="${escapeHtml(tag)}">${escapeHtml(tag)}</span>`
-  ).join('');
-
-  tagFilterRow.querySelectorAll('.tag-chip').forEach(chip => {
-    chip.addEventListener('click', async () => {
-      const tag = chip.dataset.tag;
-      activeTagFilter = activeTagFilter === tag ? null : tag;
-      await refresh();
-    });
-  });
 }
 
 function renderEntries() {
@@ -130,10 +104,6 @@ function renderEntries() {
       contentHtml = `<div class="entry-content image-name">${escapeHtml(entry.imagePath.split('/').pop())}</div>`;
     }
 
-    const tagsHtml = entry.tags.length > 0
-      ? `<div class="entry-tags">${entry.tags.map(t => `<span class="entry-tag">${escapeHtml(t)}</span>`).join('')}</div>`
-      : '';
-
     const metaHtml = `<div class="entry-meta">${relativeTime(entry.updatedAt)}</div>`;
 
     const pinIcon = entry.pinned ? ICONS.pinFilled : ICONS.pin;
@@ -142,7 +112,6 @@ function renderEntries() {
       <div class="entry${isPinned}" data-id="${entry.id}">
         ${thumbHtml}
         <div class="entry-main">
-          ${tagsHtml}
           ${contentHtml}
           ${metaHtml}
         </div>
@@ -197,14 +166,6 @@ function renderEntries() {
     });
   });
 
-  entryList.querySelectorAll('.entry-tag').forEach(tagEl => {
-    tagEl.addEventListener('click', async (e) => {
-      e.stopPropagation();
-      activeTagFilter = tagEl.textContent.trim();
-      await refresh();
-    });
-  });
-
   // Lazy-load image thumbnails via IPC
   entryList.querySelectorAll('.entry-thumb[data-image-id]').forEach(async (img) => {
     const dataUrl = await window.myClipboard.getImageData(img.dataset.imageId);
@@ -250,116 +211,7 @@ async function openPreview(id) {
     }
   }
 
-  renderPreviewTags(entry);
   previewOverlay.classList.remove('hidden');
-}
-
-function renderPreviewTags(entry) {
-  previewTags.innerHTML = '';
-
-  const editor = document.createElement('div');
-  editor.className = 'tag-editor';
-
-  entry.tags.forEach(tag => {
-    const tagItem = document.createElement('span');
-    tagItem.className = 'tag-item';
-    tagItem.innerHTML = `${escapeHtml(tag)}<span class="remove-tag" data-tag="${escapeHtml(tag)}">&times;</span>`;
-    tagItem.querySelector('.remove-tag').addEventListener('click', async () => {
-      await removeTagFromEntry(entry.id, tag);
-    });
-    editor.appendChild(tagItem);
-  });
-
-  const input = document.createElement('input');
-  input.type = 'text';
-  input.placeholder = entry.tags.length === 0 ? '添加标签...' : '';
-  input.addEventListener('keydown', async (e) => {
-    if (e.key === 'Enter' || e.key === ',') {
-      e.preventDefault();
-      const newTag = input.value.trim().replace(/,/g, '');
-      if (newTag && !entry.tags.includes(newTag)) {
-        await window.myClipboard.updateEntry(entry.id, {
-          tags: [...entry.tags, newTag]
-        });
-        await refresh();
-        const updated = entries.find(e => e.id === entry.id);
-        if (updated) {
-          currentPreviewEntry = updated;
-          renderPreviewTags(updated);
-        }
-      }
-      input.value = '';
-    } else if (e.key === 'Backspace' && input.value === '' && entry.tags.length > 0) {
-      const lastTag = entry.tags[entry.tags.length - 1];
-      await removeTagFromEntry(entry.id, lastTag);
-    }
-  });
-
-  let autocompleteDropdown = null;
-  input.addEventListener('input', () => {
-    if (autocompleteDropdown) {
-      autocompleteDropdown.remove();
-      autocompleteDropdown = null;
-    }
-    const val = input.value.trim().toLowerCase();
-    if (!val) return;
-    const suggestions = allTags.filter(t => t.toLowerCase().startsWith(val) && !entry.tags.includes(t));
-    if (suggestions.length === 0) return;
-
-    autocompleteDropdown = document.createElement('div');
-    autocompleteDropdown.className = 'autocomplete-dropdown';
-    suggestions.slice(0, 5).forEach(s => {
-      const item = document.createElement('div');
-      item.className = 'autocomplete-item';
-      item.textContent = s;
-      item.addEventListener('click', async () => {
-        await window.myClipboard.updateEntry(entry.id, {
-          tags: [...entry.tags, s]
-        });
-        await refresh();
-        const updated = entries.find(e => e.id === entry.id);
-        if (updated) {
-          currentPreviewEntry = updated;
-          renderPreviewTags(updated);
-        }
-        if (autocompleteDropdown) autocompleteDropdown.remove();
-      });
-      autocompleteDropdown.appendChild(item);
-    });
-
-    const rect = input.getBoundingClientRect();
-    autocompleteDropdown.style.position = 'fixed';
-    autocompleteDropdown.style.left = rect.left + 'px';
-    autocompleteDropdown.style.top = (rect.bottom + 4) + 'px';
-    autocompleteDropdown.style.width = rect.width + 'px';
-    document.body.appendChild(autocompleteDropdown);
-  });
-
-  input.addEventListener('blur', () => {
-    setTimeout(() => {
-      if (autocompleteDropdown) {
-        autocompleteDropdown.remove();
-        autocompleteDropdown = null;
-      }
-    }, 150);
-  });
-
-  editor.appendChild(input);
-  previewTags.appendChild(editor);
-}
-
-async function removeTagFromEntry(entryId, tag) {
-  const entry = entries.find(e => e.id === entryId);
-  if (!entry) return;
-  await window.myClipboard.updateEntry(entryId, {
-    tags: entry.tags.filter(t => t !== tag)
-  });
-  await refresh();
-  const updated = entries.find(e => e.id === entryId);
-  if (updated) {
-    currentPreviewEntry = updated;
-    renderPreviewTags(updated);
-  }
 }
 
 function closePreview() {

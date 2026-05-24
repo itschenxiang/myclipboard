@@ -5,7 +5,6 @@ contextBridge.exposeInMainWorld('myClipboard', {
   copyEntry: (id) => ipcRenderer.invoke('entries:copy', id),
   deleteEntry: (id) => ipcRenderer.invoke('entries:delete', id),
   updateEntry: (id, changes) => ipcRenderer.invoke('entries:update', id, changes),
-  getAllTags: () => ipcRenderer.invoke('tags:get-all'),
   clearAll: () => ipcRenderer.invoke('entries:clear-all'),
   getSettings: () => ipcRenderer.invoke('settings:get'),
   updateSettings: (s) => ipcRenderer.invoke('settings:update', s),
