@@ -109,7 +109,7 @@ function registerIpcHandlers(storage, panelWindow) {
 
   ipcMain.handle('app:get-info', () => {
     return {
-      version: '0.1.0',
+      version: app.getVersion(),
       dataDir: storage.dataDir,
       entryCount: storage.entries.length,
     };
