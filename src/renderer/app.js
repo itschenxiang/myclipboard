@@ -114,7 +114,7 @@ function renderEntries() {
   }
 
   entryList.innerHTML = entries.map(entry => {
-    const isPinned = entry.pinned ? ' pinned' : '';
+    const isPinned = (entry.pinned ? ' pinned' : '') + (entry.type === 'image' ? ' image-entry' : '');
 
     let contentHtml = '';
     let thumbHtml = '';

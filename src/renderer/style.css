@@ -144,6 +144,15 @@ body {
 .entry.pinned { background: rgba(0,122,255,0.05); }
 .entry.pinned:hover { background: rgba(0,122,255,0.09); }
 
+.entry.image-entry {
+  min-height: 168px;
+  align-items: center;
+}
+.entry.image-entry .entry-thumb {
+  width: 108px;
+  height: 108px;
+}
+
 .entry-thumb {
   width: 36px;
   height: 36px;
