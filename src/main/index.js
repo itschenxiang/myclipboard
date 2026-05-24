@@ -3,6 +3,9 @@ const path = require('path');
 const { pathToFileURL } = require('url');
 
 // Register custom protocol for serving local images to renderer BEFORE app.whenReady
+protocol.registerSchemesAsPrivileged([
+  { scheme: 'media', privileges: { standard: true, secure: true, supportFetchAPI: true } }
+]);
 protocol.handle('media', (request) => {
   const relativePath = request.url.slice('media://'.length);
   const dataDir = path.join(app.getPath('userData'), 'myclipboard');
