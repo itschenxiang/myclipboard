@@ -12,5 +12,25 @@
   "devDependencies": {
     "electron": "^33.0.0",
     "electron-builder": "^25.0.0"
+  },
+  "build": {
+    "appId": "com.myclipboard.app",
+    "productName": "MyClipboard",
+    "copyright": "Copyright © 2026",
+    "mac": {
+      "target": "dmg",
+      "icon": "assets/icon.png",
+      "category": "public.app-category.utilities",
+      "extendInfo": {
+        "LSUIElement": true
+      }
+    },
+    "dmg": {
+      "title": "MyClipboard"
+    },
+    "files": [
+      "src/**/*",
+      "assets/**/*"
+    ]
   }
 }

@@ -1,4 +1,4 @@
-const { ipcMain, clipboard, nativeImage, shell } = require('electron');
+const { app, ipcMain, clipboard, nativeImage, shell } = require('electron');
 const fs = require('fs');
 
 function registerIpcHandlers(storage, panelWindow) {
@@ -113,6 +113,10 @@ function registerIpcHandlers(storage, panelWindow) {
       dataDir: storage.dataDir,
       entryCount: storage.entries.length,
     };
+  });
+
+  ipcMain.handle('app:quit', () => {
+    app.quit();
   });
 
   function notifyRenderer() {

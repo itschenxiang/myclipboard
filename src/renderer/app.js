@@ -37,11 +37,26 @@ async function init() {
     });
   });
 
+  // Quit button
+  const quitOverlay = document.getElementById('quit-overlay');
+  document.getElementById('quit-btn').addEventListener('click', () => {
+    quitOverlay.classList.remove('hidden');
+  });
+  document.getElementById('quit-cancel').addEventListener('click', () => {
+    quitOverlay.classList.add('hidden');
+  });
+  document.getElementById('quit-confirm').addEventListener('click', () => {
+    window.myClipboard.quitApp();
+  });
+  quitOverlay.addEventListener('click', (e) => {
+    if (e.target === quitOverlay) quitOverlay.classList.add('hidden');
+  });
+
   // Settings button
-  const settingsBtn = document.getElementById('settings-btn');
+  const infoBtn = document.getElementById('info-btn');
   const infoOverlay = document.getElementById('info-overlay');
   const infoClose = document.getElementById('info-close');
-  settingsBtn.addEventListener('click', () => openInfo());
+  infoBtn.addEventListener('click', () => openInfo());
   infoClose.addEventListener('click', () => closeInfo());
   infoOverlay.addEventListener('click', (e) => {
     if (e.target === infoOverlay) closeInfo();
@@ -299,7 +314,9 @@ function linkifyFull(text) {
 // Close preview on Escape key
 document.addEventListener('keydown', (e) => {
   if (e.key === 'Escape') {
-    if (currentPreviewEntry) {
+    if (!document.getElementById('quit-overlay').classList.contains('hidden')) {
+      document.getElementById('quit-overlay').classList.add('hidden');
+    } else if (currentPreviewEntry) {
       closePreview();
     }
   }

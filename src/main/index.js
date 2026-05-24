@@ -45,6 +45,7 @@ protocol.registerSchemesAsPrivileged([
 ]);
 
 app.whenReady().then(async () => {
+  if (process.platform === 'darwin') app.dock.hide();
   // Custom protocol for serving local images to renderer
   protocol.handle('media', async (request) => {
     try {
