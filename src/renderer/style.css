@@ -111,6 +111,19 @@ body {
   background: #f0f0f0;
 }
 
+.entry-type-icon {
+  width: 36px;
+  height: 36px;
+  border-radius: 6px;
+  flex-shrink: 0;
+  margin-right: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.entry-type-icon.type-text { color: #8e8e93; background: #f0f0f3; }
+.entry-type-icon.type-link { color: #1a73e8; background: #e8f0fe; }
+
 .entry-main { flex: 1; min-width: 0; overflow: hidden; }
 
 .entry-content {
