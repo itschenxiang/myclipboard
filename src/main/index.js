@@ -1,6 +1,6 @@
-const { app, BrowserWindow, protocol, net } = require('electron');
+const { app, BrowserWindow, protocol } = require('electron');
 const path = require('path');
-const { pathToFileURL } = require('url');
+const fs = require('fs').promises;
 const { Storage } = require('./storage');
 const { ClipboardMonitor } = require('./clipboard');
 const { TrayManager } = require('./tray');
@@ -30,7 +30,8 @@ function createPanelWindow() {
     },
   });
 
-  win.loadFile(path.join(__dirname, '..', 'renderer', 'index.html'));
+  win.loadFile(path.join(__dirname, '..', 'renderer', 'index.html'))
+    .catch(err => console.error('Failed to load panel HTML:', err.message));
 
   win.on('blur', () => {
     win.hide();
@@ -45,20 +46,30 @@ protocol.registerSchemesAsPrivileged([
 
 app.whenReady().then(async () => {
   // Custom protocol for serving local images to renderer
-  protocol.handle('media', (request) => {
+  protocol.handle('media', async (request) => {
     try {
-      const parsed = new URL(request.url);
-      const relativePath = decodeURIComponent(parsed.pathname);
+      // request.url format: 'media:///images/xxx.png' or 'media://images/xxx.png'
+      let relativePath = request.url.slice('media://'.length);
+      // Strip leading slashes
+      relativePath = relativePath.replace(/^\/+/, '');
+      if (!relativePath) {
+        return new Response('Bad Request', { status: 400 });
+      }
+
       const dataDir = path.join(app.getPath('userData'), 'myclipboard');
       const filePath = path.join(dataDir, relativePath);
-
       const normalized = path.normalize(filePath);
-      if (!normalized.startsWith(dataDir)) {
+
+      // Prevent path traversal
+      if (!normalized.startsWith(dataDir + path.sep) && normalized !== dataDir) {
         return new Response('Forbidden', { status: 403 });
       }
 
-      return net.fetch(pathToFileURL(normalized).toString());
-    } catch {
+      const data = await fs.readFile(normalized);
+      return new Response(data, {
+        headers: { 'content-type': 'image/png', 'cache-control': 'no-cache' }
+      });
+    } catch (err) {
       return new Response('Not Found', { status: 404 });
     }
   });
