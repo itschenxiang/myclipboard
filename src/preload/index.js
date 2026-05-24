@@ -10,6 +10,7 @@ contextBridge.exposeInMainWorld('myClipboard', {
   getSettings: () => ipcRenderer.invoke('settings:get'),
   updateSettings: (s) => ipcRenderer.invoke('settings:update', s),
   openURL: (url) => ipcRenderer.invoke('shell:open-url', url),
+  getImageData: (id) => ipcRenderer.invoke('image:get-data', id),
   onEntriesUpdated: (cb) => {
     const handler = () => cb();
     ipcRenderer.on('entries:updated', handler);

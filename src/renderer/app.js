@@ -24,6 +24,7 @@ const ICONS = {
   preview: '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>',
   copy: '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>',
   pin: '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="17" x2="12" y2="22"/><path d="M5 17h14v-1.76a2 2 0 0 0-1.11-1.79l-1.78-.9A2 2 0 0 1 15 10.76V6h1a2 2 0 0 0 0-4H8a2 2 0 0 0 0 4h1v4.76a2 2 0 0 1-1.11 1.79l-1.78.9A2 2 0 0 0 5 15.24Z"/></svg>',
+  pinFilled: '<svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="17" x2="12" y2="22"/><path d="M5 17h14v-1.76a2 2 0 0 0-1.11-1.79l-1.78-.9A2 2 0 0 1 15 10.76V6h1a2 2 0 0 0 0-4H8a2 2 0 0 0 0 4h1v4.76a2 2 0 0 1-1.11 1.79l-1.78.9A2 2 0 0 0 5 15.24Z"/></svg>',
   delete: '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>',
 };
 
@@ -125,7 +126,7 @@ function renderEntries() {
       const linkedText = linkify(displayText);
       contentHtml = `<div class="entry-content">${linkedText}</div>`;
     } else {
-      thumbHtml = `<img class="entry-thumb" src="media:///${entry.imagePath}" alt="">`;
+      thumbHtml = `<img class="entry-thumb" data-image-id="${entry.id}" src="" alt="">`;
       contentHtml = `<div class="entry-content image-name">${escapeHtml(entry.imagePath.split('/').pop())}</div>`;
     }
 
@@ -133,7 +134,9 @@ function renderEntries() {
       ? `<div class="entry-tags">${entry.tags.map(t => `<span class="entry-tag">${escapeHtml(t)}</span>`).join('')}</div>`
       : '';
 
-    const metaHtml = `<div class="entry-meta">${entry.pinned ? '<span class="pin-indicator">已置顶</span>' : ''}${relativeTime(entry.updatedAt)}</div>`;
+    const metaHtml = `<div class="entry-meta">${relativeTime(entry.updatedAt)}</div>`;
+
+    const pinIcon = entry.pinned ? ICONS.pinFilled : ICONS.pin;
 
     return `
       <div class="entry${isPinned}" data-id="${entry.id}">
@@ -146,7 +149,7 @@ function renderEntries() {
         <div class="entry-actions">
           <button class="preview-btn" data-id="${entry.id}" title="预览">${ICONS.preview}</button>
           <button class="copy-btn" data-id="${entry.id}" title="复制">${ICONS.copy}</button>
-          <button class="pin-btn${entry.pinned ? ' pinned' : ''}" data-id="${entry.id}" title="置顶">${ICONS.pin}</button>
+          <button class="pin-btn${entry.pinned ? ' pinned' : ''}" data-id="${entry.id}" title="置顶">${pinIcon}</button>
           <button class="delete-btn" data-id="${entry.id}" title="删除">${ICONS.delete}</button>
         </div>
       </div>`;
@@ -201,6 +204,12 @@ function renderEntries() {
       await refresh();
     });
   });
+
+  // Lazy-load image thumbnails via IPC
+  entryList.querySelectorAll('.entry-thumb[data-image-id]').forEach(async (img) => {
+    const dataUrl = await window.myClipboard.getImageData(img.dataset.imageId);
+    if (dataUrl) img.src = dataUrl;
+  });
 }
 
 async function copyEntry(id) {
@@ -222,7 +231,12 @@ async function openPreview(id) {
       });
     });
   } else {
-    previewContent.innerHTML = `<img src="media:///${entry.imagePath}" alt="preview">`;
+    const dataUrl = await window.myClipboard.getImageData(entry.id);
+    if (dataUrl) {
+      previewContent.innerHTML = `<img src="${dataUrl}" alt="preview">`;
+    } else {
+      previewContent.innerHTML = '<div style="color:#999;">无法加载图片</div>';
+    }
   }
 
   renderPreviewTags(entry);

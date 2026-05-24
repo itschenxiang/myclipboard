@@ -1,4 +1,5 @@
 const { ipcMain, clipboard, nativeImage, shell } = require('electron');
+const fs = require('fs');
 
 function registerIpcHandlers(storage, panelWindow) {
   ipcMain.handle('entries:get', (_event, filter) => {
@@ -7,6 +8,18 @@ function registerIpcHandlers(storage, panelWindow) {
     } catch (err) {
       console.error('entries:get error:', err);
       return [];
+    }
+  });
+
+  ipcMain.handle('image:get-data', (_event, id) => {
+    try {
+      const imgPath = storage.getImagePath(id);
+      if (!imgPath) return null;
+      const data = fs.readFileSync(imgPath);
+      return `data:image/png;base64,${data.toString('base64')}`;
+    } catch (err) {
+      console.error('image:get-data error:', err.message);
+      return null;
     }
   });
 
