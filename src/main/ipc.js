@@ -1,7 +1,7 @@
 const { app, ipcMain, clipboard, nativeImage, shell } = require('electron');
 const fs = require('fs');
 
-function registerIpcHandlers(storage, panelWindow) {
+function registerIpcHandlers(storage, panelWindow, clipboardMonitor) {
   ipcMain.handle('entries:get', (_event, filter) => {
     try {
       return storage.getEntries(filter || {});
@@ -31,17 +31,17 @@ function registerIpcHandlers(storage, panelWindow) {
 
       if (entry.type === 'text') {
         clipboard.writeText(entry.content);
+        clipboardMonitor.lastText = entry.content;
       } else if (entry.type === 'image') {
         const imgPath = storage.getImagePath(id);
         if (imgPath) {
           clipboard.writeImage(nativeImage.createFromPath(imgPath));
+          clipboardMonitor.lastImageHash = entry.imageHash;
         } else {
           return false;
         }
       }
 
-      await storage.updateEntry(id, {});
-      notifyRenderer();
       return true;
     } catch (err) {
       console.error('entries:copy error:', err);

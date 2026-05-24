@@ -80,17 +80,18 @@ app.whenReady().then(async () => {
   await storage.init();
 
   panelWindow = createPanelWindow();
-  registerIpcHandlers(storage, panelWindow);
-
-  const iconPath = path.join(__dirname, '..', '..', 'assets', 'icon.png');
-  trayManager = new TrayManager(panelWindow, iconPath);
-  trayManager.create();
 
   clipboardMonitor = new ClipboardMonitor(storage);
   clipboardMonitor._onNewEntry = () => {
     panelWindow.webContents.send('entries:updated');
   };
   clipboardMonitor.start();
+
+  registerIpcHandlers(storage, panelWindow, clipboardMonitor);
+
+  const iconPath = path.join(__dirname, '..', '..', 'assets', 'icon.png');
+  trayManager = new TrayManager(panelWindow, iconPath);
+  trayManager.create();
 
   console.log('MyClipboard started');
 }).catch((err) => {
