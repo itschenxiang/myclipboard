@@ -134,7 +134,7 @@ body {
   overflow: hidden;
   text-overflow: ellipsis;
   line-height: 1.4;
-  max-width: 260px;
+  max-width: 300px;
 }
 
 .entry-content a { color: #1a73e8; text-decoration: none; pointer-events: none; }
@@ -161,7 +161,7 @@ body {
   display: flex;
   gap: 2px;
   flex-shrink: 0;
-  margin-left: 6px;
+  margin-left: 10px;
   opacity: 0;
   transition: opacity 0.1s;
 }
