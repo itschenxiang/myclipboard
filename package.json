@@ -3,9 +3,11 @@
   "version": "1.0.0",
   "description": "A clipboard manager for macOS",
   "main": "src/main/index.js",
+  "author": "itschenxiang",
   "scripts": {
     "start": "electron .",
-    "build": "electron-builder"
+    "build": "electron-builder",
+    "build:mac": "electron-builder --mac"
   },
   "devDependencies": {
     "electron": "^33.0.0",
