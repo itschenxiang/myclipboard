@@ -86,7 +86,6 @@ body {
 #entry-list {
   flex: 1;
   overflow-y: auto;
-  max-height: 500px;
 }
 
 .entry {
