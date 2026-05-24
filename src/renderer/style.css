@@ -123,6 +123,7 @@ body {
 }
 .entry-type-icon.type-text { color: #8e8e93; background: #f0f0f3; }
 .entry-type-icon.type-link { color: #1a73e8; background: #e8f0fe; }
+.entry-type-icon.type-image { color: #7b1fa2; background: #f3e5f5; }
 
 .entry-main { flex: 1; min-width: 0; overflow: hidden; }
 
@@ -312,8 +313,8 @@ body {
   top: 12px;
   left: 50%;
   transform: translateX(-50%);
-  background: #fff;
-  color: #1d1d1f;
+  background: #1a73e8;
+  color: #fff;
   padding: 8px 18px;
   border-radius: 10px;
   font-size: 13px;
@@ -321,6 +322,9 @@ body {
   opacity: 0;
   pointer-events: none;
   transition: opacity 0.2s;
-  box-shadow: 0 4px 16px rgba(0,0,0,0.12);
+  box-shadow: 0 4px 16px rgba(26,115,232,0.3);
+  display: flex;
+  align-items: center;
+  gap: 6px;
 }
 #copy-toast.show { opacity: 1; }

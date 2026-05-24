@@ -109,7 +109,7 @@ function renderEntries() {
       const linkedText = linkify(displayText);
       contentHtml = `<div class="entry-content">${linkedText}</div>`;
     } else {
-      thumbHtml = `<img class="entry-thumb" data-image-id="${entry.id}" src="" alt="">`;
+      thumbHtml = `<div class="entry-type-icon type-image">${ICONS.typeImage}</div>`;
       contentHtml = `<div class="entry-content image-name">${escapeHtml(entry.imagePath.split('/').pop())}</div>`;
     }
 
@@ -185,7 +185,7 @@ function renderEntries() {
 async function copyEntry(id) {
   const ok = await window.myClipboard.copyEntry(id);
   if (ok) {
-    showToast('<span style="color:#1a73e8;">&#10003;</span> 复制成功');
+    showToast('<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-2px;"><polyline points="20 6 9 17 4 12"/></svg> 复制成功');
     setTimeout(() => window.myClipboard.hidePanel(), 600);
   }
 }
