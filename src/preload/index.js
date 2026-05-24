@@ -1,0 +1,16 @@
+const { contextBridge, ipcRenderer } = require('electron');
+
+contextBridge.exposeInMainWorld('myClipboard', {
+  getEntries: (filter) => ipcRenderer.invoke('entries:get', filter),
+  copyEntry: (id) => ipcRenderer.invoke('entries:copy', id),
+  deleteEntry: (id) => ipcRenderer.invoke('entries:delete', id),
+  updateEntry: (id, changes) => ipcRenderer.invoke('entries:update', id, changes),
+  getAllTags: () => ipcRenderer.invoke('tags:get-all'),
+  clearAll: () => ipcRenderer.invoke('entries:clear-all'),
+  getSettings: () => ipcRenderer.invoke('settings:get'),
+  updateSettings: (s) => ipcRenderer.invoke('settings:update', s),
+  openURL: (url) => ipcRenderer.invoke('shell:open-url', url),
+  onEntriesUpdated: (cb) => {
+    ipcRenderer.on('entries:updated', () => cb());
+  },
+});
