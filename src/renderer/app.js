@@ -13,6 +13,7 @@ const previewContent = document.getElementById('preview-content');
 const previewCopy = document.getElementById('preview-copy');
 const previewDelete = document.getElementById('preview-delete');
 const previewClose = document.getElementById('preview-close');
+const scrollTopBtn = document.getElementById('scroll-top-btn');
 
 // SVG icon templates
 const ICONS = {
@@ -65,6 +66,12 @@ async function init() {
 
   searchInput.addEventListener('input', onSearchInput);
   window.myClipboard.onEntriesUpdated(() => refresh());
+  scrollTopBtn.addEventListener('click', () => {
+    entryList.scrollTo({ top: 0, behavior: 'smooth' });
+  });
+  entryList.addEventListener('scroll', () => {
+    scrollTopBtn.classList.toggle('visible', entryList.scrollTop > 60);
+  });
   await refresh();
 }
 
