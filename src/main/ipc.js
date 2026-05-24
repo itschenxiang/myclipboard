@@ -41,7 +41,6 @@ function registerIpcHandlers(storage, panelWindow) {
       }
 
       await storage.updateEntry(id, {});
-      panelWindow.hide();
       notifyRenderer();
       return true;
     } catch (err) {
@@ -102,6 +101,10 @@ function registerIpcHandlers(storage, panelWindow) {
     } catch (err) {
       console.error('shell:open-url error:', err);
     }
+  });
+
+  ipcMain.handle('panel:hide', () => {
+    panelWindow.hide();
   });
 
   function notifyRenderer() {

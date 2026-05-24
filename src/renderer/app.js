@@ -175,7 +175,10 @@ function renderEntries() {
 
 async function copyEntry(id) {
   const ok = await window.myClipboard.copyEntry(id);
-  if (ok) showToast('已复制');
+  if (ok) {
+    showToast('已复制');
+    setTimeout(() => window.myClipboard.hidePanel(), 600);
+  }
 }
 
 function showToast(msg) {
