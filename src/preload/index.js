@@ -11,6 +11,8 @@ contextBridge.exposeInMainWorld('myClipboard', {
   updateSettings: (s) => ipcRenderer.invoke('settings:update', s),
   openURL: (url) => ipcRenderer.invoke('shell:open-url', url),
   onEntriesUpdated: (cb) => {
-    ipcRenderer.on('entries:updated', () => cb());
+    const handler = () => cb();
+    ipcRenderer.on('entries:updated', handler);
+    return () => ipcRenderer.removeListener('entries:updated', handler);
   },
 });
