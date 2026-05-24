@@ -77,11 +77,9 @@ async function refresh() {
   if (sidebarFilter === 'pinned') {
     entries = entries.filter(e => e.pinned);
   } else if (sidebarFilter === 'text') {
-    entries = entries.filter(e => e.type === 'text' && !urlRegex.test(e.content.trim()));
-    urlRegex.lastIndex = 0;
+    entries = entries.filter(e => e.type === 'text' && !isPureUrl(e.content));
   } else if (sidebarFilter === 'link') {
-    entries = entries.filter(e => e.type === 'text' && urlRegex.test(e.content.trim()));
-    urlRegex.lastIndex = 0;
+    entries = entries.filter(e => e.type === 'text' && isPureUrl(e.content));
   } else if (sidebarFilter === 'image') {
     entries = entries.filter(e => e.type === 'image');
   }
@@ -116,8 +114,7 @@ function renderEntries() {
     let isUrl = false;
 
     if (entry.type === 'text') {
-      isUrl = urlRegex.test(entry.content.trim());
-      urlRegex.lastIndex = 0;
+      isUrl = isPureUrl(entry.content);
       const icon = isUrl ? ICONS.typeLink : ICONS.typeText;
       const iconClass = isUrl ? 'type-link' : 'type-text';
       thumbHtml = `<div class="entry-type-icon ${iconClass}">${icon}</div>`;
@@ -125,8 +122,9 @@ function renderEntries() {
       const displayText = entry.content.length > 80
         ? entry.content.slice(0, 80).replace(/\n/g, ' ')
         : entry.content.replace(/\n/g, ' ');
+      const contentClass = isUrl ? 'entry-content link-content' : 'entry-content';
       const linkedText = linkify(displayText);
-      contentHtml = `<div class="entry-content">${linkedText}</div>`;
+      contentHtml = `<div class="${contentClass}">${linkedText}</div>`;
     } else {
       thumbHtml = `<div class="entry-type-icon type-image">${ICONS.typeImage}</div><img class="entry-thumb" data-image-id="${entry.id}" src="" alt="">`;
       contentHtml = '';
@@ -298,7 +296,25 @@ function escapeHtml(text) {
   return div.innerHTML;
 }
 
-const urlRegex = /(https?:\/\/[^\s<>"{}|\\^`\[\]]+)/gi;
+const urlRegex = /([a-zA-Z][a-zA-Z0-9+.-]*:\/\/[^\s<>"'{}|\\^`\[\]]+)/gi;
+
+// Common TLDs to avoid false positives on bare domains like "file.txt"
+const TLD = '(com|org|net|io|edu|gov|dev|app|info|biz|tv|me|co|ai|gg|ly|to|sh|vc|ws|xyz|page|site|online|tech|design|blog|news|store|click|link|live|world|today|email|media|zone|agency|cloud|digital|uk|de|jp|cn|fr|br|au|ru|in|it|nl|se|pl|es|ch|be|at|kr|ca|mx|tw|hk|sg)';
+
+function isPureUrl(text) {
+  const t = text.trim();
+  if (!t || /\s/.test(t)) return false;
+
+  // Explicit protocol: http://, https://, ftp://, file://, mailto:, etc.
+  if (/^[a-zA-Z][a-zA-Z0-9+.-]*:\/\//.test(t)) return true;
+
+  // www. prefix — almost certainly a URL
+  if (/^www\./i.test(t)) return true;
+
+  // Bare domain with known TLD, optionally followed by path/query/fragment
+  const domainRe = new RegExp(`^[a-zA-Z0-9][-a-zA-Z0-9.]*\\.${TLD}([/?#]\\S*)?$`, 'i');
+  return domainRe.test(t);
+}
 
 function linkify(text) {
   return escapeHtml(text).replace(urlRegex, '<a href="$1">$1</a>');
@@ -306,7 +322,7 @@ function linkify(text) {
 
 function linkifyFull(text) {
   return escapeHtml(text).replace(
-    /(https?:\/\/[^\s<>"{}|\\^`\[\]]+)/gi,
+    urlRegex,
     '<a href="$1">$1</a>'
   );
 }

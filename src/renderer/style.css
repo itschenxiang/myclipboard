@@ -142,6 +142,11 @@ body {
   font-weight: 400;
 }
 
+.entry-content.link-content {
+  color: #007aff;
+  text-decoration: underline;
+}
+
 .entry-content a { color: #007aff; text-decoration: none; pointer-events: none; }
 
 .entry-content.image-name { color: rgba(0,0,0,0.45); font-size: 12px; }
