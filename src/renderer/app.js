@@ -176,7 +176,7 @@ function renderEntries() {
 async function copyEntry(id) {
   const ok = await window.myClipboard.copyEntry(id);
   if (ok) {
-    showToast('已复制');
+    showToast('<span style="color:#1a73e8;">&#10003;</span> 复制成功');
     setTimeout(() => window.myClipboard.hidePanel(), 600);
   }
 }
@@ -184,7 +184,7 @@ async function copyEntry(id) {
 function showToast(msg) {
   const toast = document.getElementById('copy-toast');
   if (toast._timer) clearTimeout(toast._timer);
-  toast.textContent = msg;
+  toast.innerHTML = msg;
   toast.classList.add('show');
   toast._timer = setTimeout(() => {
     toast.classList.remove('show');

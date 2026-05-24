@@ -299,14 +299,15 @@ body {
   top: 12px;
   left: 50%;
   transform: translateX(-50%);
-  background: #333;
-  color: #fff;
-  padding: 6px 16px;
-  border-radius: 8px;
-  font-size: 12px;
+  background: #fff;
+  color: #1d1d1f;
+  padding: 8px 18px;
+  border-radius: 10px;
+  font-size: 13px;
   z-index: 200;
   opacity: 0;
   pointer-events: none;
   transition: opacity 0.2s;
+  box-shadow: 0 4px 16px rgba(0,0,0,0.12);
 }
 #copy-toast.show { opacity: 1; }
