@@ -93,15 +93,15 @@ body {
 .entry {
   display: flex;
   align-items: flex-start;
-  padding: 8px 12px;
+  padding: 12px 14px;
   cursor: pointer;
   transition: background 0.08s ease;
   border-bottom: 0.5px solid rgba(0,0,0,0.04);
 }
 .entry:last-child { border-bottom: none; }
 .entry:hover { background: rgba(0,0,0,0.025); }
-.entry.pinned { background: rgba(255,204,0,0.06); }
-.entry.pinned:hover { background: rgba(255,204,0,0.1); }
+.entry.pinned { background: rgba(0,122,255,0.05); }
+.entry.pinned:hover { background: rgba(0,122,255,0.09); }
 
 .entry-thumb {
   width: 36px;
