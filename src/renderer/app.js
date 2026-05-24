@@ -8,7 +8,6 @@ let currentPreviewEntry = null;
 // DOM refs
 const searchInput = document.getElementById('search-input');
 const entryList = document.getElementById('entry-list');
-const clearAllBtn = document.getElementById('clear-all-btn');
 const previewOverlay = document.getElementById('preview-overlay');
 const previewContent = document.getElementById('preview-content');
 const previewCopy = document.getElementById('preview-copy');
@@ -39,7 +38,6 @@ async function init() {
   });
 
   searchInput.addEventListener('input', onSearchInput);
-  clearAllBtn.addEventListener('click', onClearAll);
   previewClose.addEventListener('click', closePreview);
   previewOverlay.addEventListener('click', (e) => {
     if (e.target === previewOverlay) closePreview();
@@ -71,11 +69,6 @@ function onSearchInput() {
     searchQuery = searchInput.value.trim();
     await refresh();
   }, 200);
-}
-
-async function onClearAll() {
-  await window.myClipboard.clearAll();
-  await refresh();
 }
 
 // Rendering

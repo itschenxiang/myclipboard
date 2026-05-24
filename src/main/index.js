@@ -13,7 +13,7 @@ let panelWindow;
 
 function createPanelWindow() {
   const win = new BrowserWindow({
-    width: 400,
+    width: 420,
     maxHeight: 600,
     show: false,
     frame: false,
