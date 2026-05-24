@@ -46,6 +46,7 @@ async function init() {
   infoOverlay.addEventListener('click', (e) => {
     if (e.target === infoOverlay) closeInfo();
   });
+  document.getElementById('info-copy-path').addEventListener('click', copyInfoPath);
 
   searchInput.addEventListener('input', onSearchInput);
   window.myClipboard.onEntriesUpdated(() => refresh());
@@ -245,9 +246,16 @@ async function onPreviewDelete() {
 // Info modal
 async function openInfo() {
   const info = await window.myClipboard.getAppInfo();
+  document.getElementById('info-version').textContent = info.version;
   document.getElementById('info-path').textContent = info.dataDir;
   document.getElementById('info-count').textContent = info.entryCount;
   document.getElementById('info-overlay').classList.remove('hidden');
+}
+
+async function copyInfoPath() {
+  const path = document.getElementById('info-path').textContent;
+  await navigator.clipboard.writeText(path);
+  showToast('<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-3px;"><circle cx="12" cy="12" r="10"/><polyline points="17 8 10 15 7 12"/></svg> 路径已复制');
 }
 
 function closeInfo() {

@@ -288,7 +288,19 @@ body {
   font-size: 13px;
 }
 .info-label { color: #8e8e93; }
-.info-value { color: #1d1d1f; word-break: break-all; text-align: right; max-width: 240px; }
+.info-value-group { display: flex; align-items: center; gap: 4px; }
+.info-value { color: #1d1d1f; word-break: break-all; text-align: right; max-width: 200px; }
+
+#info-copy-path {
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: #8e8e93;
+  padding: 2px 4px;
+  border-radius: 4px;
+  flex-shrink: 0;
+}
+#info-copy-path:hover { background: #f0f0f0; color: #1a73e8; }
 
 #preview-content {
   padding: 18px;
