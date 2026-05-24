@@ -144,13 +144,22 @@ class Storage {
     return [...tagSet].sort();
   }
 
-  async clearAll() {
-    for (const e of this.entries) {
+  async clearAll(keepPinned = true) {
+    const toRemove = keepPinned
+      ? this.entries.filter(e => !e.pinned)
+      : [...this.entries];
+
+    for (const e of toRemove) {
       if (e.type === 'image') {
         try { await fs.unlink(path.join(this.dataDir, e.imagePath)); } catch {}
       }
     }
-    this.entries = [];
+
+    if (keepPinned) {
+      this.entries = this.entries.filter(e => e.pinned);
+    } else {
+      this.entries = [];
+    }
     await this._saveHistory();
   }
 

@@ -39,6 +39,50 @@ body {
 #search-input::placeholder { color: #999; }
 #search-input:focus { background: #ebebed; }
 
+/* Body row: sidebar + main */
+#body-row {
+  display: flex;
+  flex: 1;
+  min-height: 0;
+}
+
+/* Sidebar */
+#sidebar {
+  display: flex;
+  flex-direction: column;
+  width: 44px;
+  padding: 6px 0;
+  border-right: 1px solid #e8e8ed;
+  background: #fafafa;
+  gap: 2px;
+}
+
+.sidebar-item {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  margin: 0 auto;
+  border: none;
+  border-radius: 8px;
+  background: transparent;
+  color: #8e8e93;
+  cursor: pointer;
+  transition: all 0.15s;
+}
+
+.sidebar-item:hover { background: #e8e8ed; color: #1d1d1f; }
+.sidebar-item.active { background: #e8f0fe; color: #1a73e8; }
+
+/* Main panel */
+#main-panel {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+
 #tag-filter-row {
   padding: 6px 14px;
   border-bottom: 1px solid #e8e8ed;
@@ -64,7 +108,7 @@ body {
 #entry-list {
   flex: 1;
   overflow-y: auto;
-  max-height: 520px;
+  max-height: 500px;
 }
 
 .entry {
@@ -95,7 +139,7 @@ body {
   display: flex;
   gap: 4px;
   flex-wrap: wrap;
-  margin-bottom: 3px;
+  margin-bottom: 2px;
 }
 
 .entry-tag {
@@ -126,18 +170,16 @@ body {
 }
 
 .entry-meta {
-  font-size: 11px;
-  color: #999;
-  margin-top: 3px;
-  display: flex;
-  align-items: center;
-  gap: 6px;
+  font-size: 10px;
+  color: #b0b0b5;
+  margin-top: 1px;
 }
 
 .pin-indicator {
   font-size: 10px;
   color: #f9a825;
   font-weight: 600;
+  margin-right: 6px;
 }
 
 .entry-actions {
@@ -151,17 +193,21 @@ body {
 .entry:hover .entry-actions { opacity: 1; }
 
 .entry-actions button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
   background: none;
   border: none;
   cursor: pointer;
-  padding: 4px;
+  width: 28px;
+  height: 28px;
   border-radius: 5px;
-  font-size: 14px;
   color: #8e8e93;
-  line-height: 1;
 }
 .entry-actions button:hover { background: #e8e8ed; color: #1d1d1f; }
+.entry-actions button svg { width: 14px; height: 14px; flex-shrink: 0; }
 .pin-btn.pinned { color: #f9a825; }
+.delete-btn:hover { color: #e53935 !important; background: #ffebee !important; }
 
 /* Preview Modal */
 #preview-overlay {
