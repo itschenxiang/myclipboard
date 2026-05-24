@@ -185,7 +185,7 @@ function renderEntries() {
 async function copyEntry(id) {
   const ok = await window.myClipboard.copyEntry(id);
   if (ok) {
-    showToast('<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-2px;"><polyline points="20 6 9 17 4 12"/></svg> 复制成功');
+    showToast('<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-3px;"><circle cx="12" cy="12" r="10"/><polyline points="17 8 10 15 7 12"/></svg> 复制成功');
     setTimeout(() => window.myClipboard.hidePanel(), 600);
   }
 }
