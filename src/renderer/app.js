@@ -213,7 +213,18 @@ function renderEntries() {
 }
 
 async function copyEntry(id) {
-  await window.myClipboard.copyEntry(id);
+  const ok = await window.myClipboard.copyEntry(id);
+  if (ok) showToast('已复制');
+}
+
+function showToast(msg) {
+  const toast = document.getElementById('copy-toast');
+  if (toast._timer) clearTimeout(toast._timer);
+  toast.textContent = msg;
+  toast.classList.add('show');
+  toast._timer = setTimeout(() => {
+    toast.classList.remove('show');
+  }, 1200);
 }
 
 // Preview
