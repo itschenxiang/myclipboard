@@ -17,8 +17,7 @@ const previewClose = document.getElementById('preview-close');
 
 // SVG icon templates
 const ICONS = {
-  preview: '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>',
-  copy: '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>',
+  visit: '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>',
   pin: '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="17" x2="12" y2="22"/><path d="M5 17h14v-1.76a2 2 0 0 0-1.11-1.79l-1.78-.9A2 2 0 0 1 15 10.76V6h1a2 2 0 0 0 0-4H8a2 2 0 0 0 0 4h1v4.76a2 2 0 0 1-1.11 1.79l-1.78.9A2 2 0 0 0 5 15.24Z"/></svg>',
   pinFilled: '<svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="17" x2="12" y2="22"/><path d="M5 17h14v-1.76a2 2 0 0 0-1.11-1.79l-1.78-.9A2 2 0 0 1 15 10.76V6h1a2 2 0 0 0 0-4H8a2 2 0 0 0 0 4h1v4.76a2 2 0 0 1-1.11 1.79l-1.78.9A2 2 0 0 0 5 15.24Z"/></svg>',
   delete: '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>',
@@ -95,9 +94,10 @@ function renderEntries() {
 
     let contentHtml = '';
     let thumbHtml = '';
+    let isUrl = false;
 
     if (entry.type === 'text') {
-      const isUrl = urlRegex.test(entry.content.trim());
+      isUrl = urlRegex.test(entry.content.trim());
       urlRegex.lastIndex = 0;
       const icon = isUrl ? ICONS.typeLink : ICONS.typeText;
       const iconClass = isUrl ? 'type-link' : 'type-text';
@@ -110,12 +110,13 @@ function renderEntries() {
       contentHtml = `<div class="entry-content">${linkedText}</div>`;
     } else {
       thumbHtml = `<div class="entry-type-icon type-image">${ICONS.typeImage}</div><img class="entry-thumb" data-image-id="${entry.id}" src="" alt="">`;
-      contentHtml = `<div class="entry-content image-name">${escapeHtml(entry.imagePath.split('/').pop())}</div>`;
+      contentHtml = '';
     }
 
     const metaHtml = `<div class="entry-meta">${relativeTime(entry.updatedAt)}</div>`;
 
     const pinIcon = entry.pinned ? ICONS.pinFilled : ICONS.pin;
+    const visitBtn = isUrl ? `<button class="visit-btn" data-url="${escapeHtml(entry.content.trim())}" title="访问">${ICONS.visit}</button>` : '';
 
     return `
       <div class="entry${isPinned}" data-id="${entry.id}">
@@ -125,8 +126,7 @@ function renderEntries() {
           ${metaHtml}
         </div>
         <div class="entry-actions">
-          <button class="preview-btn" data-id="${entry.id}" title="预览">${ICONS.preview}</button>
-          <button class="copy-btn" data-id="${entry.id}" title="复制">${ICONS.copy}</button>
+          ${visitBtn}
           <button class="pin-btn${entry.pinned ? ' pinned' : ''}" data-id="${entry.id}" title="置顶">${pinIcon}</button>
           <button class="delete-btn" data-id="${entry.id}" title="删除">${ICONS.delete}</button>
         </div>
@@ -142,17 +142,10 @@ function renderEntries() {
     });
   });
 
-  entryList.querySelectorAll('.copy-btn').forEach(btn => {
+  entryList.querySelectorAll('.visit-btn').forEach(btn => {
     btn.addEventListener('click', (e) => {
       e.stopPropagation();
-      copyEntry(btn.dataset.id);
-    });
-  });
-
-  entryList.querySelectorAll('.preview-btn').forEach(btn => {
-    btn.addEventListener('click', (e) => {
-      e.stopPropagation();
-      openPreview(btn.dataset.id);
+      window.myClipboard.openURL(btn.dataset.url);
     });
   });
 
