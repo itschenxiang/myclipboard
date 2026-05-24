@@ -356,7 +356,7 @@ function escapeHtml(text) {
 const urlRegex = /(https?:\/\/[^\s<>"{}|\\^`\[\]]+)/gi;
 
 function linkify(text) {
-  return text.replace(urlRegex, '<a href="$1">$1</a>');
+  return escapeHtml(text).replace(urlRegex, '<a href="$1">$1</a>');
 }
 
 function linkifyFull(text) {
