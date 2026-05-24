@@ -1,4 +1,4 @@
-const { Tray, nativeImage } = require('electron');
+const { Tray } = require('electron');
 const { createTrayIcon } = require('./tray-icon');
 
 class TrayManager {
@@ -9,14 +9,7 @@ class TrayManager {
   }
 
   create() {
-    let icon;
-    try {
-      icon = nativeImage.createFromPath(this.iconPath).resize({ width: 18, height: 18 });
-      if (icon.isEmpty()) throw new Error('Icon file is empty');
-    } catch {
-      icon = createTrayIcon();
-    }
-
+    const icon = createTrayIcon();
     this.tray = new Tray(icon);
 
     this.tray.on('click', () => {

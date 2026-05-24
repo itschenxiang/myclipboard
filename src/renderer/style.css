@@ -14,9 +14,7 @@ body {
   display: flex;
   flex-direction: column;
   height: 100vh;
-  background: rgba(255,255,255,0.92);
-  backdrop-filter: blur(30px) saturate(180%);
-  -webkit-backdrop-filter: blur(30px) saturate(180%);
+  background: #ffffff;
   border-radius: 14px;
   box-shadow: 0 8px 40px rgba(0,0,0,0.12), 0 0 0 0.5px rgba(0,0,0,0.06);
   overflow: hidden;
@@ -187,9 +185,7 @@ body {
 #preview-overlay {
   position: fixed;
   top: 0; left: 0; right: 0; bottom: 0;
-  background: rgba(0,0,0,0.2);
-  backdrop-filter: blur(4px);
-  -webkit-backdrop-filter: blur(4px);
+  background: rgba(0,0,0,0.25);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -198,9 +194,7 @@ body {
 #preview-overlay.hidden { display: none; }
 
 #preview-modal {
-  background: rgba(255,255,255,0.96);
-  backdrop-filter: blur(20px);
-  -webkit-backdrop-filter: blur(20px);
+  background: #ffffff;
   border-radius: 14px;
   width: 520px;
   max-height: 500px;
@@ -241,9 +235,7 @@ body {
 #info-overlay {
   position: fixed;
   top: 0; left: 0; right: 0; bottom: 0;
-  background: rgba(0,0,0,0.2);
-  backdrop-filter: blur(4px);
-  -webkit-backdrop-filter: blur(4px);
+  background: rgba(0,0,0,0.25);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -252,9 +244,7 @@ body {
 #info-overlay.hidden { display: none; }
 
 #info-modal {
-  background: rgba(255,255,255,0.96);
-  backdrop-filter: blur(20px);
-  -webkit-backdrop-filter: blur(20px);
+  background: #ffffff;
   border-radius: 14px;
   width: 360px;
   box-shadow: 0 12px 48px rgba(0,0,0,0.15), 0 0 0 0.5px rgba(0,0,0,0.06);
@@ -380,9 +370,7 @@ body {
   top: 12px;
   left: 50%;
   transform: translateX(-50%);
-  background: rgba(0,122,255,0.92);
-  backdrop-filter: blur(10px);
-  -webkit-backdrop-filter: blur(10px);
+  background: #007aff;
   color: #fff;
   padding: 7px 16px;
   border-radius: 20px;
