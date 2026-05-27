@@ -7,6 +7,7 @@ let currentPreviewEntry = null;
 
 // DOM refs
 const searchInput = document.getElementById('search-input');
+const searchClear = document.getElementById('search-clear');
 const entryList = document.getElementById('entry-list');
 const previewOverlay = document.getElementById('preview-overlay');
 const previewContent = document.getElementById('preview-content');
@@ -65,6 +66,16 @@ async function init() {
   document.getElementById('info-copy-path').addEventListener('click', copyInfoPath);
 
   searchInput.addEventListener('input', onSearchInput);
+  searchInput.addEventListener('input', () => {
+    searchClear.classList.toggle('visible', searchInput.value.length > 0);
+  });
+  searchClear.addEventListener('click', () => {
+    searchInput.value = '';
+    searchClear.classList.remove('visible');
+    searchQuery = '';
+    searchInput.focus();
+    refresh();
+  });
   window.myClipboard.onEntriesUpdated(() => refresh());
   scrollTopBtn.addEventListener('click', () => {
     entryList.scrollTo({ top: 0, behavior: 'smooth' });

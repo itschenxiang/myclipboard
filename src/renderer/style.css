@@ -24,9 +24,13 @@ body {
   padding: 12px 14px 8px;
 }
 
+#search-input-wrap {
+  position: relative;
+}
+
 #search-input {
   width: 100%;
-  padding: 6px 10px;
+  padding: 6px 24px 6px 10px;
   border: none;
   border-radius: 6px;
   background: rgba(0,0,0,0.04);
@@ -38,6 +42,36 @@ body {
 
 #search-input::placeholder { color: rgba(0,0,0,0.3); }
 #search-input:focus { background: rgba(0,0,0,0.07); }
+
+#search-clear {
+  position: absolute;
+  right: 7px;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 14px;
+  height: 14px;
+  border: none;
+  border-radius: 50%;
+  background: rgba(0,0,0,0.18);
+  color: #fff;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.15s ease, background 0.1s ease;
+  padding: 0;
+}
+
+#search-clear.visible {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+#search-clear:hover {
+  background: rgba(0,0,0,0.4);
+}
 
 /* Body row: sidebar + main */
 #body-row {
